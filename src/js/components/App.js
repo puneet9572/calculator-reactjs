@@ -66,46 +66,49 @@ export default class App extends Component {
         })
     }
     delete(){
-        const { displayValue, operator } = this.state
-        if(!operator){
+        const { displayValue } = this.state
         this.setState({
            displayValue : displayValue.substr(0, displayValue.length-1)
-        })
-        }   
+        })  
     }
-
-    operations(nextOperator){
-        const { displayValue, operator, value } = this.state
-        const next = parseFloat(displayValue)
-        const operations = {
-            '/' : (prev, next) => prev / next,
-            '*' : (prev, next) => prev * next,
-            '-' : (prev, next) => prev - next,
-            '+' : (prev, next) => prev + next,
-            '=' : (prev, next) => prev
+    result(){
+        const { displayValue } = this.state
+            let res =  0;
+            var  tokens = displayValue.split(/\b/);
+        for(let i=0;i<tokens.length;i++){
+            if(tokens[i]=='+'||tokens[i]=='-'||tokens[i]=='*'||tokens[i]=='/'){
+				if(res == 0){
+				if(tokens[i] === '+'){
+					res = parseInt(tokens[i-1]) + parseInt(tokens[i+1]);		
+				} 
+				else if(tokens[i] === '/'){
+					res = parseInt(tokens[i-1]) / parseInt(tokens[i+1]);		
+				}
+				else if(tokens[i] === '*'){
+					res = parseInt(tokens[i-1]) * parseInt(tokens[i+1]);		
+				}
+				else{
+					res = parseInt(tokens[i-1]) - parseInt(tokens[i+1]);
+				}
+				}
+				else{
+					if(tokens[i] === '+'){
+					res = res + parseInt(tokens[i+1]);		
+				} 
+				else if(tokens[i] === '/'){
+					res = res / parseInt(tokens[i+1]);		
+				}
+				else if(tokens[i] === '*'){
+					res = res * parseInt(tokens[i+1]);		
+				}
+				else{
+					res = res - parseInt(tokens[i+1]);
+				}
+				} 
+			}
         }
-        if(value == null){
-            this.setState({
-                value: next
-            })
-        }
-        else if(operator){
-            const currentValue = value || 0
-            const newValue = operations[operator](currentValue, next)
-            this.setState({
-                value: newValue,
-                displayValue: String(newValue)
-            })
-        }
-        //const prev = ???
-        
-        
-       // const Value = currentOperation[operator](prev,next)
-
-    
         this.setState({
-            operand : true,
-            operator : nextOperator
+            displayValue : String(res)
         })
     }
     render() {
@@ -120,26 +123,26 @@ export default class App extends Component {
                         <div class="row justify-content center">
                             <button onClick = {()=> this.clearAll()} class="numoperan col-3">AC</button>
                             <button onClick = {()=> this.toggleMinus()} class="numoperan col-3">±</button>
-                            <button onClick = {()=> this.operations('*')} class="numoperan col-3">*</button>
-                            <button onClick = {()=> this.operations('/')} class="numoperan col-3">/</button>
+                            <button onClick = {()=> this.inputDigit('*')} class="numoperan col-3">*</button>
+                            <button onClick = {()=> this.inputDigit('/')} class="numoperan col-3">/</button>
                         </div>
                         <div class="row justify-content center">
                             <button onClick = {()=> this.inputDigit(7)} class="numoperan col-3">7</button>
                             <button onClick = {()=> this.inputDigit(8)} class="numoperan col-3">8</button>
                             <button onClick = {()=> this.inputDigit(9)} class="numoperan col-3">9</button>
-                            <button onClick = {()=> this.operations('-')} class="numoperan col-3">-</button>
+                            <button onClick = {()=> this.inputDigit('-')} class="numoperan col-3">-</button>
                         </div>
                         <div class="row justify-content center">
                             <button onClick = {()=> this.inputDigit(4)} class="numoperan col-3">4</button>
                             <button onClick = {()=> this.inputDigit(5)} class="numoperan col-3">5</button>
                             <button onClick = {()=> this.inputDigit(6)} class="numoperan col-3">6</button>
-                            <button onClick = {()=> this.operations('+')} class="numoperan col-3">+</button>
+                            <button onClick = {()=> this.inputDigit('+')} class="numoperan col-3">+</button>
                         </div>
                         <div class="row justify-content center">
                             <button onClick = {()=> this.inputDigit(1)} class="numoperan col-3">1</button>
                             <button onClick = {()=> this.inputDigit(2)} class="numoperan col-3">2</button>
                             <button onClick = {()=> this.inputDigit(3)} class="numoperan col-3">3</button>
-                            <button onClick = {()=> this.operations('=')} class="numoperan col-3">=</button>
+                            <button onClick = {()=> this.result()} class="numoperan col-3">=</button>
                         </div>
                         <div class="row justify-content center">
                             <button onClick = {()=> this.inputDot()} class="numoperan col-3">.</button>
