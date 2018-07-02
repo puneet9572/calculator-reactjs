@@ -72,43 +72,36 @@ export default class App extends Component {
         })  
     }
     result(){
-        const { displayValue } = this.state
-            let res =  0;
-            var  tokens = displayValue.split(/\b/);
-        for(let i=0;i<tokens.length;i++){
-            if(tokens[i]=='+'||tokens[i]=='-'||tokens[i]=='*'||tokens[i]=='/'){
-				if(res == 0){
-				if(tokens[i] === '+'){
-					res = parseInt(tokens[i-1]) + parseInt(tokens[i+1]);		
-				} 
-				else if(tokens[i] === '/'){
-					res = parseInt(tokens[i-1]) / parseInt(tokens[i+1]);		
-				}
-				else if(tokens[i] === '*'){
-					res = parseInt(tokens[i-1]) * parseInt(tokens[i+1]);		
-				}
-				else{
-					res = parseInt(tokens[i-1]) - parseInt(tokens[i+1]);
-				}
-				}
-				else{
-					if(tokens[i] === '+'){
-					res = res + parseInt(tokens[i+1]);		
-				} 
-				else if(tokens[i] === '/'){
-					res = res / parseInt(tokens[i+1]);		
-				}
-				else if(tokens[i] === '*'){
-					res = res * parseInt(tokens[i+1]);		
-				}
-				else{
-					res = res - parseInt(tokens[i+1]);
-				}
-				} 
-			}
+        const { displayValue } = this.state;
+            let res = 0;
+            let operators = ['/','*','+','-'];
+            let operations = [division, multiplication, addition, subtract];
+            let tokens  = displayValue.split(/\b/);
+            for(let j=0;j<operators.length;j++){
+            for(let i=0;i<tokens.length;i++){
+                if(tokens[i] == operators[j]){
+                    let num1 = parseFloat(tokens[i-1]);
+                    let num2 = parseFloat(tokens[i+1]);
+                    let res = operations[j](num1, num2);
+                    tokens[i-1]  = res.toString();
+                    tokens.splice(i--, 2);
+                }	
+            }
         }
-        this.setState({
-            displayValue : String(res)
+            function addition(x,y){
+                return x + y;
+            }
+            function subtract(x,y){
+                return x - y;
+            }
+            function division(x,y){
+                return x / y;
+            }
+            function multiplication(x,y){
+                return x * y;
+            }
+            this.setState({
+            displayValue : String(tokens)
         })
     }
     render() {
